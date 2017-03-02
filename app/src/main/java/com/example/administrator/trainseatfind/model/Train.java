@@ -20,4 +20,9 @@ public class Train {
 
     public String getReference() {return reference;}
     public void setReference(final String reference) {this.reference = reference;}
+
+    public String toString() {
+        return "id is "+ id + ", traino is " + trainNo + ", reference is " + reference + ", traintype is " + trainType + ".";
+    }
+
 }

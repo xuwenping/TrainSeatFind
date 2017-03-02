@@ -2,6 +2,7 @@ package com.example.administrator.trainseatfind.activity;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 
@@ -31,7 +32,8 @@ public class MainActivity extends Activity {
                 HttpUtil.sendHttpRequest("http://www.59178.com/huoche/Puke.htm", new HttpCallbackListener() {
                     @Override
                     public void onFinish(String response) {
-                        Utility.handleTrainResponseDeriveXml(trainDB, response);
+                        Log.d(TAG, "onFinish");
+                        Utility.handleTrainResponseDeriveHtml(trainDB, response);
                     }
 
                     @Override
