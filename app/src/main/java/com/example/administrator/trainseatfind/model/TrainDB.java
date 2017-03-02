@@ -62,6 +62,11 @@ public class TrainDB {
         }
     }
 
+    /**
+     * 从数据库中获取匹配数据
+     * @param selectionArray
+     * @return
+     */
     public List<Train> loadTrain(String[] selectionArray) {
         List<Train> list = new ArrayList<Train>();
         Cursor cursor = null;

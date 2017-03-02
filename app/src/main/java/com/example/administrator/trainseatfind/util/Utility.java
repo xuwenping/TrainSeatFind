@@ -112,52 +112,52 @@ public class Utility {
 
         try {
             int trainType = TrainTypeDefine.TRAINTYPE_UNDEFINE;
+            long beginTime = System.currentTimeMillis();
             Document doc = Jsoup.parse(response);
-
-            /**
-             * 获取列车的类型
-             */
-            Elements h1Elements = doc.select("h1");
-            for (Element element :h1Elements) {
-                String str = element.text();
-                Log.d(TAG, "str is " + str);
-                if (str != null) {
-                    if (str.indexOf("普客车次列表") != -1) {
-                        trainType = TrainTypeDefine.TRAINTYPE_GENERAL;
-                    }
-                    else if (str.indexOf("普快车次列表") != -1) {
-                        trainType = TrainTypeDefine.TRAINTYPE_GENERAL_SPEED;
-                    }
-                    else if (str.indexOf("特快车次列表") != -1) {
-                        trainType = TrainTypeDefine.TRAINTYPE_SPECIAL_SPEED;
-                    }
-                    else if (str.indexOf("直达特快车次列表") != -1) {
-                        trainType = TrainTypeDefine.TRAINTYPE_DIRECT_SPECIAL_SPEED;
-                    }
-                    else if (str.indexOf("快速火车车次列表") != -1) {
-                        trainType = TrainTypeDefine.TRAINTYPE_SPEED;
-                    }
-                    else if (str.indexOf("高铁车次列表") != -1) {
-                        trainType = TrainTypeDefine.TRAINTYPE_HIGH_SPEED;
-                    }
-                    else if (str.indexOf("动车车次列表") != -1) {
-                        trainType = TrainTypeDefine.TRAINTYPE_BULLET;
-                    }
-                }
-            }
 
             /**
              * 通过select选择包含车辆信息的节点
              */
-            Elements elements = doc.select("a[href~=/checi/((\\d)*\\.|((\\d)+-(\\d)+\\.))htm]");
+            Elements elements = doc.select("a[href~=/checi/.*\\.htm]");
             for (Element element :elements) {
                 Train train = new Train();
-                train.setTrainNo(element.text());
+                String str = element.text();
+                train.setTrainNo(str);
                 train.setReference(element.attr("href"));
+
+                StringBuilder stringBuilder = new  StringBuilder(str);
+
+                if (stringBuilder.indexOf("L") != -1) {
+                    trainType = TrainTypeDefine.TRAINTYPE_GENERAL_SPEED;
+                }
+                else if (stringBuilder.indexOf("T") != -1) {
+                    trainType = TrainTypeDefine.TRAINTYPE_SPECIAL_SPEED;
+                }
+                else if (stringBuilder.indexOf("Z") != -1) {
+                    trainType = TrainTypeDefine.TRAINTYPE_DIRECT_SPECIAL_SPEED;
+                }
+                else if (stringBuilder.indexOf("K") != -1) {
+                    trainType = TrainTypeDefine.TRAINTYPE_SPEED;
+                }
+                else if (stringBuilder.indexOf("C") != -1
+                        || stringBuilder.indexOf("G") != -1) {
+                    trainType = TrainTypeDefine.TRAINTYPE_HIGH_SPEED;
+                }
+                else if (stringBuilder.indexOf("D") != -1) {
+                    trainType = TrainTypeDefine.TRAINTYPE_BULLET;
+                }
+                else {
+                    trainType = TrainTypeDefine.TRAINTYPE_GENERAL;
+                }
+
                 train.setTrainType(trainType);
-                Log.d(TAG, train.toString());
-                //trainDB.saveTrain(train);
+//                Log.d(TAG, train.toString());
+                trainDB.saveTrain(train);
             }
+
+            long endTime = System.currentTimeMillis();
+
+            Log.d(TAG, "XXX time is ["+(endTime-beginTime) + "].");
 
             return true;
         }
